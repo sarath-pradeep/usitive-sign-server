@@ -7,6 +7,7 @@ authRouter.post('/add-user', authController.addUser);
 authRouter.post('/verify-otp', authController.verifyOtp);
 authRouter.post('/set-password', authController.setPassword);
 authRouter.post('/login', authController.login);
+authRouter.post('/forgot-password', authController.forgotPassword);
 
 
 export default authRouter;

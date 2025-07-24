@@ -152,10 +152,37 @@ const login = async (req, res) => {
     }
 }
 
+const forgotPassword = async (req, res) => {
+    try{
+        const email = req.body.email;
+        if (!email) {
+            return res.status(400).json({ error: "Email is required" });
+        }
+        // Check if user exists
+        const existingUser = await UserDetails.findOne({ email });
+        if (!existingUser) {
+            return res.status(400).json({ error: "User Email not Found" });
+        }
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        otpVerficationStore[email] = otp;
+        // Send OTP email
+        const emailSent = await sendEmail(email, "OTP Verification", `<p>Your OTP is: <strong>${otp}</strong></p>`);
+        if (!emailSent) {
+            return res.status(500).json({ error: "Failed to send OTP email" });
+        }
+        return res.status(200).json({ message: "OTP has been sent to your email", email });
+    } catch (error) {
+        console.error("Error in forgot password:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
+
 
 export default {
     addUser,
     verifyOtp,
     setPassword,
-    login
+    login,
+    forgotPassword
 };
